@@ -35,8 +35,12 @@ const fetchQuote = (code: string) => fetchSymbol(`${code}.T`);
 export const getNikkei225 = () => fetchSymbol("^N225");
 
 export async function getQuotes(): Promise<Record<string, Quote | null>> {
-  const entries = await Promise.all(
-    STOCKS.map(async (s) => [s.code, await fetchQuote(s.code)] as const),
-  );
+  // 銘柄数が多いので、同時リクエスト数を絞って取得する
+  const BATCH = 12;
+  const entries: (readonly [string, Quote | null])[] = [];
+  for (let i = 0; i < STOCKS.length; i += BATCH) {
+    const chunk = STOCKS.slice(i, i + BATCH);
+    entries.push(...(await Promise.all(chunk.map(async (s) => [s.code, await fetchQuote(s.code)] as const))));
+  }
   return Object.fromEntries(entries);
 }
