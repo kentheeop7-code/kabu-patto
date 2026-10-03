@@ -6,12 +6,22 @@ export type Quote = {
   time: number;
 };
 
-async function fetchSymbol(symbol: string): Promise<Quote | null> {
+export type Snapshot = {
+  quotes: Record<string, Quote | null>;
+  nikkei: Quote | null;
+  /** 取得した時刻(ms) */
+  fetchedAt: number;
+};
+
+const YAHOO = "https://query1.finance.yahoo.com/v8/finance/chart";
+
+/** fresh=true のときはキャッシュを使わず最新を取得する */
+async function fetchSymbol(symbol: string, fresh: boolean): Promise<Quote | null> {
   try {
-    const res = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`,
-      { next: { revalidate: 60 }, headers: { "User-Agent": "Mozilla/5.0" } },
-    );
+    const res = await fetch(`${YAHOO}/${encodeURIComponent(symbol)}?interval=1d&range=1d`, {
+      ...(fresh ? { cache: "no-store" as const } : { next: { revalidate: 60 } }),
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
     if (!res.ok) return null;
     const json = await res.json();
     const meta = json?.chart?.result?.[0]?.meta;
@@ -27,17 +37,14 @@ async function fetchSymbol(symbol: string): Promise<Quote | null> {
   }
 }
 
-const fetchQuote = (code: string) => fetchSymbol(`${code}.T`);
-
-export const getNikkei225 = () => fetchSymbol("^N225");
-
-export async function getQuotes(): Promise<Record<string, Quote | null>> {
+export async function getSnapshot(fresh = false): Promise<Snapshot> {
   // 銘柄数が多いので、同時リクエスト数を絞って取得する
-  const BATCH = 12;
+  const BATCH = 16;
   const entries: (readonly [string, Quote | null])[] = [];
+  const nikkeiPromise = fetchSymbol("^N225", fresh);
   for (let i = 0; i < STOCKS.length; i += BATCH) {
     const chunk = STOCKS.slice(i, i + BATCH);
-    entries.push(...(await Promise.all(chunk.map(async (s) => [s.code, await fetchQuote(s.code)] as const))));
+    entries.push(...(await Promise.all(chunk.map(async (s) => [s.code, await fetchSymbol(`${s.code}.T`, fresh)] as const))));
   }
-  return Object.fromEntries(entries);
+  return { quotes: Object.fromEntries(entries), nikkei: await nikkeiPromise, fetchedAt: Date.now() };
 }

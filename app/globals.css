@@ -51,3 +51,25 @@ h3 { font-size: 16px; margin: 6px 0 0; line-height: 1.4; }
 .group { margin-top: 28px; }
 .groupTitle { font-size: 18px; margin: 0 0 12px; padding-left: 10px; border-left: 3px solid var(--gold); }
 .groupTitle span { font-size: 12px; font-weight: 400; color: var(--sub); margin-left: 6px; }
+.infoRow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
+.infoRow .index { margin-top: 0; }
+.refresh { border: 1px solid var(--accent); background: transparent; color: var(--accent); padding: 9px 16px; border-radius: 999px; font-size: 13px; cursor: pointer; font-family: inherit; }
+.refresh:disabled { opacity: .5; cursor: default; }
+.warn { color: var(--up); }
+.ai { margin-top: 14px; }
+.aiBtn { width: 100%; padding: 11px; border-radius: 12px; border: 1px solid var(--gold); background: transparent; color: var(--gold); font-size: 14px; cursor: pointer; font-family: inherit; }
+.aiBtn:disabled { opacity: .6; cursor: default; }
+.aiErr { font-size: 12px; color: var(--up); margin: 8px 0 0; }
+.aiResult { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 13px; }
+.aiResult p { margin: 8px 0 0; }
+.aiResult ul { margin: 6px 0 0; padding-left: 18px; }
+.aiResult li { margin: 2px 0; }
+.aiHead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.aiHead .label { flex-basis: 100%; }
+.aiOutlook { font-size: 20px; font-weight: 700; }
+.aiOutlook.up { color: var(--up); } .aiOutlook.down { color: var(--down); } .aiOutlook.flat { color: var(--sub); }
+.aiConf { font-size: 12px; color: var(--sub); }
+.aiLevels { font-variant-numeric: tabular-nums; }
+.risks { color: var(--sub); }
+.aiInd { font-size: 11px; color: var(--sub); font-variant-numeric: tabular-nums; }
+.aiNote { font-size: 11px; color: var(--sub); }

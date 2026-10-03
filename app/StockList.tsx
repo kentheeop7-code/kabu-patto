@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { PREFECTURES, type Stock } from "@/lib/stocks";
 import type { Quote } from "@/lib/quotes";
+import AiAnalysis from "./AiAnalysis";
 
 type Sort = "code" | "min" | "change";
 type Quotes = Record<string, Quote | null>;
@@ -80,6 +81,7 @@ function Card({
                 : "優待の有無は未確認です。公式IR情報をご確認ください。")}
             {s.benefitNote && <span className="note">{s.benefitNote}</span>}
           </p>
+          <AiAnalysis code={s.code} />
           <a
             className="ext"
             href={`https://www.nikkei.com/nkd/company/?scode=${s.code}`}
